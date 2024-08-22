@@ -1,14 +1,28 @@
-from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.authentication import (
     AuthCredentials,
     AuthenticationBackend,
-    AuthenticationError,
     SimpleUser,
-    BaseUser,
 )
-from starlette.middleware import Middleware
 from security.session import SessionHandler
-from fastapi import HTTPException, status
+from fastapi import HTTPException
+
+# Adjust to your needs
+allowed_users = ["test", "admin", "me@mydomain.com"]
+group_field = "urn:oid:1.3.6.1.4.1.5923.1.1.1.1"
+allowed_groups = ["employee"]
+
+
+def authorize_user(saml_user_data: dict, saml_user_id: str):
+    # This is a very simple authorization function that just checks if the user has the right role.
+    if saml_user_id in allowed_users:
+        # This depends on the type of nameID you get. it's also possible that you need
+        #  to extract this from an element in the saml_user_data
+        return True
+    if group_field in saml_user_data and any(
+        set(saml_user_data[group_field]) & set(allowed_groups)
+    ):
+        return True
+    return False
 
 
 class SAMLUser(SimpleUser):

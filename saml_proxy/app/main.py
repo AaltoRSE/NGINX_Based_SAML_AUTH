@@ -1,17 +1,20 @@
 from typing import Union
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import FastAPI, Request, Response, Security, HTTPException
-from security.saml import prepare_from_fastapi_request, saml_settings
-from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from starlette.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from security.session import SessionHandler
-from security.auth import SAMLSessionBackend, clean_session
 import starlette.status as status
 from starlette.requests import HTTPConnection
 
-from urllib.parse import urlencode
+
+from security.session import SessionHandler
+from security.auth import SAMLSessionBackend, clean_session, authorize_user
+from security.saml import prepare_from_fastapi_request, saml_settings
+
+from onelogin.saml2.auth import OneLogin_Saml2_Auth
+
+
 import logging
 
 
@@ -100,6 +103,13 @@ async def saml_callback(request: Request):
             sessionData["samlNameIdNameQualifier"] = auth.get_nameid_nq()
             sessionData["samlNameIdSPNameQualifier"] = auth.get_nameid_spnq()
             sessionData["samlSessionIndex"] = auth.get_session_index()
+            if not authorize_user(
+                sessionData["samlUserdata"], sessionData["samlNameId"]
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="User not allowed to use this resource",
+                )
             session_key = session_handler.create_session(sessionData)
             logging.info("Session key created, adding to request session")
             request.session["key"] = session_key

@@ -1,1 +1,8 @@
 saml_database
+
+# Never upload certificates to source control
+saml_proxy/app/saml/certs/
+
+
+# python cache
+**/*/__pycache__/

@@ -27,6 +27,8 @@ async def prepare_from_fastapi_request(request: Request, debug=False):
         # "lowercase_urlencoding": False
     }
     form_data = await request.form()
+    if not int(os.environ.get("PROXY_DEV", 0)) == 1:
+        rv["https"] = "on"
     if "SAMLResponse" in form_data:
         SAMLResponse = form_data["SAMLResponse"]
         rv["post_data"]["SAMLResponse"] = SAMLResponse
