@@ -1,0 +1,32 @@
+{
+    "security": {
+        "nameIdEncrypted": true,
+        "authnRequestsSigned": true,
+        "logoutRequestSigned": true,
+        "logoutResponseSigned": true,
+        "signMetadata": true,
+        "wantMessagesSigned": true,
+        "wantAssertionsSigned": true,
+        "wantNameId" : true,
+        "wantNameIdEncrypted": false,
+        "wantAssertionsEncrypted": true,
+        "allowSingleLabelDomains": false,
+        "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+        "digestAlgorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
+        "rejectDeprecatedAlgorithm": true
+    },
+    "contactPerson": {
+        "technical": {
+            "givenName": "Thomas Pfau",
+            "emailAddress": "thomas.pfau@aalto.fi"
+        },
+        "support": {"givenName": "Aalto Science IT", "emailAddress": "science-it@aalto.fi"}
+    },
+    "organization": {
+        "en-US": {
+            "name": "Aalto SciComp",
+            "displayname": "Aalto SciComp",
+            "url": "http://scicomp.aalto.fi"
+        }
+    }
+}

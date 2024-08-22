@@ -1,0 +1,13 @@
+fastapi[standard]
+gunicorn
+uvicorn
+pymongo
+schedule
+httpx
+python3-saml
+python-multipart
+python-jose[cryptography]
+sse-starlette
+pytest-mock-resources[mongo]
+pytest-mock-resources[redis]
+itsdangerous

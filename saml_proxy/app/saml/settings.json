@@ -1,0 +1,33 @@
+{
+    "strict": true,
+    "debug": true,
+
+    "sp": {        
+        "entityId": "http://127.0.0.1:3000/saml/metadata",
+        "assertionConsumerService": {            
+            "url": "http://localhost/saml/acs",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        },        
+        "singleLogoutService": {            
+            "url": "http://localhost/saml/sls",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+        "x509cert": "",
+        "privateKey": ""
+    },
+    
+    "idp" : {
+        "entityId" : "http://127.0.0.1:8081/realms/master",
+        "singleSignOnService": {
+            "url" : "http://127.0.0.1:8081/realms/master/protocol/saml",
+            "binding" : "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
+        },
+        "singleLogoutService": {
+            "binding":"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+            "url" :"http://127.0.0.1:8081/realms/master/protocol/saml"
+        },
+        "x509cert": "MIICmzCCAYMCBgGReIhsuTANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZtYXN0ZXIwHhcNMjQwODIyMDUxOTUyWhcNMzQwODIyMDUyMTMyWjARMQ8wDQYDVQQDDAZtYXN0ZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCm+DJdgLc1ucudrNwDBSov1nc3hJvw6TI3AUiWBUna8Zzx1ASvUVLK7RjbRYmZ1Pq7MYhn3YZ5rvB1UhY0YxQ/+H2W0oSzmckK2Ybb/0oK1HKdKUIy1vI9fnjc20CQkDHIlWjTktgpRSM40h4X7cc8eQD1pOdcinWQlCpxRw3WGwtvi9l7chraSrkx24E+1Tq7VAkh3Q+rBiYAw1n6kxETHW0kFeEqfCdkwzsXjSVB21Dg2oYSUoPuyyzkrX4K1NToTZ7wmpL4hW66J/PZSzVPBDwLZKndWoJDhxZEVgkJDXqtIYPHxbsNoUtJO4XxOLqTnibLsnp4ckERt9noagHzAgMBAAEwDQYJKoZIhvcNAQELBQADggEBABKu7yhOJ2bhk6XXWhsuwo3RAGFelG7ZXV4cR1SftH0YXR4LNCUh4X7xDgv7FYQzVXji0wtK2I7bRJ+VOKvZG5XtVVpWaxkgz9YZxgd1HktbhFuwJxPejbCmANjhuA4vd1mKqUQKHS+mV+V8egbE1eEeVlf6WEogScyHCsmDsCnZnhrHA2jMI9Xp86dWy8PW2e3W2PPGL9QmHkzst/ugjwqZ6cYMkyuqs5AR2tBAXdG8OcLh9PDKaPxKa2P7KIVbCYu2uTZCBcVTMBRymUEVPjx1tXePUUCTIP79dkCYbRqlf5LpBL0yHD7gZpD3virFl9UIEN3ph+XRd2xLr3kyjWc="
+    
+    }   
+}
