@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./test
+    environment:
+      # Add your backend environment variables here
+      - SOME_BACKEND_ENV_VAR=some_value
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  nginx:
+    build: ./nginx_saml
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx_saml/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      saml_proxy:
+        condition: service_started
+      backend:
+        condition: service_healthy
+
+  saml_proxy:
+    build: ./saml_proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment:
+      - MONGOUSER=${MONGOUSER}
+      - MONGOPASSWORD=${MONGOPASSWORD}
+      - MONGOHOST=mongo
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:7.0.4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGOUSER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGOPASSWORD}
+    # We will not create an extra volume, as this is only for session storage, and thus not needed.
+    # Further auth will need some form of persistence, but this is not the case for this project.
+    #volumes:
+    #  - ./mongodb:/data/db
+    ports:
+      - 127.0.0.1:27017:27017

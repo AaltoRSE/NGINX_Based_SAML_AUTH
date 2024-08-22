@@ -1,0 +1,97 @@
+version: "3.8"
+
+services:
+  # For the dev environment, we will use some additional services.
+  # keycloak and mysql, the keycloak checker and mysql
+  mysql:
+    image: docker.io/library/mysql:5.7
+    volumes:
+      - ./saml_database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+  keycloak_checker:
+    image: curlimages/curl
+    command: ["sleep", "infinity"]
+    depends_on:
+      - keycloak
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://keycloak:8080"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.4
+    environment:
+      DB_VENDOR: MYSQL
+      DB_ADDR: mysql
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    # Needs an external port for the auth mechanism to connect to
+    ports:
+      - 8081:8080
+    depends_on:
+      - mysql
+    command:
+      - start-dev
+  backend:
+    build: ./test
+    # Port forwarding just for testing purposes
+    ports:
+      - "8080:3000"
+    environment:
+      # Add your backend environment variables here
+      - SOME_BACKEND_ENV_VAR=some_value
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      saml_proxy:
+        condition: service_started
+      backend:
+        condition: service_healthy
+
+  saml_proxy:
+    build: ./saml_proxy
+    # Port forwarding just for testing purposes
+    ports:
+      - "3100:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment:
+      - MONGOUSER=MONGOUSER
+      - MONGOPASSWORD=MONGOPASSWORD
+      - MONGOHOST=mongo
+      - PROXY_DEV=1
+    depends_on:
+      - mongo
+  # Required for session management, on restart sessions are cleaned (as the mongodb is within the container.)
+  mongo:
+    image: mongo:7.0.4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=MONGOUSER
+      - MONGO_INITDB_ROOT_PASSWORD=MONGOPASSWORD
+    # We will not create an extra volume, as this is only for session storage, and thus not needed.
+    # Further auth will need some form of persistence, but this is not the case for this project.
+    #volumes:
+    #  - ./mongodb:/data/db
+    ports:
+      - 127.0.0.1:27017:27017
