@@ -23,7 +23,7 @@ spec:
         - name: {{ .Values.app_name }}-keycloak
           image: quay.io/keycloak/keycloak:25.0.4
           ports:
-            - containerPort: 8081 
+            - containerPort: 8080
           resources:
             requests:
               cpu: 1
