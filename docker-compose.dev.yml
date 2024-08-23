@@ -55,7 +55,7 @@ services:
       timeout: 10s
       retries: 5
   nginx:
-    build: ./nginx
+    image: nginx:alpine
     ports:
       - "80:80"
     volumes:
@@ -81,6 +81,8 @@ services:
       - MONGOPASSWORD=MONGOPASSWORD
       - MONGOHOST=mongo
       - PROXY_DEV=1
+    volumes:
+      - ./certs/:/code/app/saml/certs/:ro
     depends_on:
       - mongo
   # Required for session management, on restart sessions are cleaned (as the mongodb is within the container.)

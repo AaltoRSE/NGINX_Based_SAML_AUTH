@@ -1,0 +1,71 @@
+# Keycloak and mysql deployments
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app_name }}-keycloak
+  namespace: {{ Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
+    app.kubernetes.io/component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
+        app.kubernetes.io/component: server
+    spec:
+      initContainers:
+        - name: init-mysql-check
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 {{ .Values.app_name }}-mysql 3306; do echo "Waiting for MySQL..."; sleep 5; done']
+      containers:
+        - name: {{ .Values.app_name }}-keycloak
+          image: quay.io/keycloak/keycloak:25.0.4
+          ports:
+            - containerPort: 8081 
+          resources:
+            requests:
+              cpu: 1
+          env:
+            - {
+                name: DB_VENDOR,
+                value: MYSQL,
+              }
+            - {
+                name: DB_ADDR,
+                value: {{ .Values.app_name }}-mysql
+              }
+            - {
+                name: DB_DATABASE,
+                value:  {{ .Values.mysql_database }}
+              }
+            - {
+                name: DB_USER,
+                value: {{ .Values.mysql_user }}
+              }
+            - {
+                name: DB_PASSWORD,
+                value: {{ .Values.mysql_password }}
+              }
+            - {
+                name: KEYCLOAK_USER,
+                value: {{ .Values.keycloak_user }}
+              }
+            - {
+                name: KEYCLOAK_PASSWORD,
+                value: {{ .Values.keycloak_password }}
+              }
+            - {
+                name: KEYCLOAK_ADMIN,
+                value: {{ .Values.keycloack_admin }}
+              }
+            - {
+                name: KEYCLOAK_ADMIN_PASSWORD,
+                value: {{ .Values.keycloak_admin_password }}
+              }             
+        

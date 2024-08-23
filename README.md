@@ -86,3 +86,6 @@ The app initializes a simple SAML authentication flow, which creates a cookie th
 
 The app is expected to run behind some form of https proxy (most likely run on a kubernetes cluster which terminates the https connection before it reaches the app).
 If you need to use your own https, you can add the https setup to nginx.
+
+### Production setup
+

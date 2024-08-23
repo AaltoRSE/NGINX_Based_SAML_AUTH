@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app_name }}-saml-dev-config
+data:
+  settings.json: |
+    {
+        "strict": true,
+        "debug": true,
+        "sp": {        
+            "entityId": "https://{{ .Values.app_name }}.{{ .Values.kubernetes_domain }}/saml/metadata",
+            "assertionConsumerService": {            
+                "url": "https://{{ .Values.app_name }}.{{ .Values.kubernetes_domain }}/saml/acs",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            },        
+            "singleLogoutService": {            
+                "url": "https://{{ .Values.app_name }}.{{ .Values.kubernetes_domain }}/saml/sls",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+            "x509cert": "",
+            "privateKey": ""
+        },
+        "idp" : {
+            "entityId" : "https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}/realms/master",
+            "singleSignOnService": {
+                "url" : "https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}/realms/master/protocol/saml",
+                "binding" : "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
+            },
+            "singleLogoutService": {
+                "binding":"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+                "url" :"https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}/realms/master/protocol/saml"
+            },
+            "x509cert": "{{ .Values.idp.x509cert }}"
+        }   
+    }

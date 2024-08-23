@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app_name }}-mysql
+  namespace: {{ Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.app_name }}-mysql
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app_name }}-mysql
+    spec:
+    
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.mysql_root_password }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql_database }}
+            - name: MYSQL_USER
+              value: {{ .Values.mysql_user }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.mysql_password }}
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: {{ .Values.app_name }}-mysql-volume
+      volumes:
+        - name: {{ .Values.app_name }}-mysql-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.app_name }}-mysql-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app_name }}-mysql
+  namespace: {{ Values.namespace }}
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: {{ .Values.app_name }}-mysql
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.app_name }}-mysql-volume
+  namespace: {{ Values.namespace }}
+spec:
+  storageClassName: nfs-client # Empty string must be explicitly set otherwise default StorageClass will be set
+  accessModes: [ReadWriteOnce] # This should only ever be accessed by one mongoDB server instance
+  resources:
+    requests:
+      storage: 1Gi
+#---

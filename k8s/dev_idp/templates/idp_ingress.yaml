@@ -1,0 +1,32 @@
+---
+# The ingress says "please HTTP proxy PATH on HOSTNAME to the
+# respective service I am specifying."
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app_name }}-idp-ingress
+  namespace: {{ Values.namespace }}
+  annotations:
+    # Use a certificate manager to automatically handle SSL. Ask your cluster admin to set this up.
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Spec tells the actual parameters: hosts to listen on, path prefixes.
+spec:
+  tls:
+    - hosts:
+        - {{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
+      secretName: {{ .Values.app_name }}-tls
+  rules:
+    - host: {{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            # To where do we send these incoming requests?  This
+            # defines the target of these requests, and corresponds to
+            # the service defined below (matching the name).
+            backend:
+              service:
+                name: dev_idp_{{ .Values.app_name }}_svc
+                port:
+                  number: 80          
+---

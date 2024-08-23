@@ -1,0 +1,262 @@
+---
+# The ingress says "please HTTP proxy PATH on HOSTNAME to the
+# respective service I am specifying."
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: llm-ingress
+  namespace: your_namespace
+  annotations:
+    # Use a certificate manager to automatically handle SSL. Ask your cluster admin to set this up.
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Spec tells the actual parameters: hosts to listen on, path prefixes.
+spec:
+  tls:
+    - hosts:
+        - saml_app.your_domain.com
+      secretName: saml-app-tls
+  rules:
+    - host: saml_app.your_domain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            # To where do we send these incoming requests?  This
+            # defines the target of these requests, and corresponds to
+            # the service defined below (matching the name).
+            backend:
+              service:
+                name: saml-app-svc
+                port:
+                  number: 80          
+---
+# A service defines a network target, basically: you could think of it
+# as a load-balanced internal DNS of some sort (it's more fancy since
+# it has ports and stuff like that).
+#
+# This service points (the "selector") to the app with a certain name
+# (defined below).
+apiVersion: v1
+kind: Service
+metadata:
+  name: saml-app-svc
+  namespace: your_namespace
+  labels:
+    app.kubernetes.io/name: saml-app-svc
+    app.kubernetes.io/component: server
+spec:
+  # type: inference server
+  # What ports and stuff does this service have?
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  # This defines where incoming connections are routed to: app of a
+  # certain name, defined below.
+  selector:
+    app.kubernetes.io/name: saml-app
+#    app.kubernetes.io/component: server
+---
+# This is the actual application: actually it's a **deployment**,
+# which means:
+#   - Define a container that runs
+#   - It can run multiple copies of this in parellel
+#   - Keeps them in sync, scale up and down as needed, etc.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saml-app
+  namespace: your_namespace
+  labels:
+    app.kubernetes.io/name: saml-app
+    app.kubernetes.io/component: server
+# The definition of the service itself
+spec:
+  # Test with one replica
+  replicas: 1
+  # This is how the deployment knows which pods are part of it.  These
+  # labels should match the template labels.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: saml-app
+      app.kubernetes.io/component: server
+  # The template is used to make each pod of the deployment - as many
+  # as needed to match spec.replicas.
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: saml-app
+        app.kubernetes.io/component: server
+    # You can probably figure out what most of these mean...
+    spec:
+      # Use specific host only
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+        - name: llm-models
+          hostPath:
+            path: /srv/models/
+            type: Directory
+
+      containers:
+        - name: backend
+          image: your_image_location
+          #imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          # This defines environment variables inside the container.
+          # This one is from a **secret**, which can be used to
+          # logically separate secrets from config.
+          #
+          # `ConfigMaps` can alse be useful: you can set environment
+          # variables or even dynamically mount config files inside of
+          # the container.
+          env:
+            - name: MODEL
+              value: "llama-2-7b-chat.gguf.q4_0.bin"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "8000"
+          volumeMounts:
+            - mountPath: /models
+              name: llm-models
+              readOnly: true
+          #env:
+          # created with: kubectl -n rse create secret generic scicomp-docs-search-update --from-literal=token=TOKEN
+          # - name: SEARCH_UPDATE_AUTHORIZATION
+          #   valueFrom:
+          #     secretKeyRef:
+          #       name: scicomp-docs-search-update
+          #       key: token
+        - name: llm-nginx-cont
+          image: harbor.cs.aalto.fi/aaltorse-public/llm_nginx:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: LLM_MODEL
+              value: "llama-2"
+            - {
+                name: AUTH_TOKEN,
+                valueFrom:
+                  { secretKeyRef: { name: llm-gateway, key: inference_key } },
+              }
+
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+      # Since the image is private, we need permission to pull it.  I
+      # somehow got this from harbor config.  (AaltoRSE people can
+      # probably re-use this existing secret).
+      #
+      # created with: `kubectl -n rse create secret docker-registry robot-scicomp-docs-search-pull --docker-server=DOMAIN --docker-username='robot$NAME' --docker-password='SECRET'`
+      # imagePullSecrets:
+      #  - name: robot-scicomp-docs-search-pull
+
+---
+# This is the actual application: actually it's a **deployment**,
+# which means:
+#   - Define a container that runs
+#   - It can run multiple copies of this in parellel
+#   - Keeps them in sync, scale up and down as needed, etc.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-lama2-chat
+  namespace: rse
+  labels:
+    app.kubernetes.io/name: llm-lama2-chat
+    app.kubernetes.io/component: server
+# The definition of the service itself
+spec:
+  # Test with one replica
+  replicas: 1
+  # This is how the deployment knows which pods are part of it.  These
+  # labels should match the template labels.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: llm-lama2-chat
+      app.kubernetes.io/component: server
+  # The template is used to make each pod of the deployment - as many
+  # as needed to match spec.replicas.
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: llm-lama2-chat
+        app.kubernetes.io/component: server
+    # You can probably figure out what most of these mean...
+    spec:
+      # Use specific host only
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node21.cs.aalto.fi
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+        - name: llm-models
+          hostPath:
+            path: /srv/models/
+            type: Directory
+
+      containers:
+        - name: llm-llama2-chat-cont
+          image: harbor.cs.aalto.fi/aaltorse-public/llm_llama_cpp:latest
+          #imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          # This defines environment variables inside the container.
+          # This one is from a **secret**, which can be used to
+          # logically separate secrets from config.
+          #
+          # `ConfigMaps` can alse be useful: you can set environment
+          # variables or even dynamically mount config files inside of
+          # the container.
+          env:
+            - name: MODEL
+              value: "llama2-llama.cpp-2023-12-04/llama-2-13b-chat/ggml-model-f16-v2.gguf"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "8000"
+          volumeMounts:
+            - mountPath: /models
+              name: llm-models
+              readOnly: true
+          #env:
+          # created with: kubectl -n rse create secret generic scicomp-docs-search-update --from-literal=token=TOKEN
+          # - name: SEARCH_UPDATE_AUTHORIZATION
+          #   valueFrom:
+          #     secretKeyRef:
+          #       name: scicomp-docs-search-update
+          #       key: token
+        - name: llm-nginx-cont
+          image: harbor.cs.aalto.fi/aaltorse-public/llm_nginx:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: LLM_MODEL
+              value: "llama-2"
+            - {
+                name: AUTH_TOKEN,
+                valueFrom:
+                  { secretKeyRef: { name: llm-gateway, key: inference_key } },
+              }
+
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+      # Since the image is private, we need permission to pull it.  I
+      # somehow got this from harbor config.  (AaltoRSE people can
+      # probably re-use this existing secret).
+      #
+      # created with: `kubectl -n rse create secret docker-registry robot-scicomp-docs-search-pull --docker-server=DOMAIN --docker-username='robot$NAME' --docker-password='SECRET'`
+      # imagePullSecrets:
+      #  - name: robot-scicomp-docs-search-pull

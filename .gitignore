@@ -6,3 +6,5 @@ saml_proxy/app/saml/certs/
 
 # python cache
 **/*/__pycache__/
+
+certs

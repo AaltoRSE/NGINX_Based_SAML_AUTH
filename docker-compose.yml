@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
   backend:
@@ -18,10 +18,8 @@ services:
     volumes:
       - ./nginx_saml/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      saml_proxy:
-        condition: service_started
-      backend:
-        condition: service_healthy
+      - saml_proxy
+      - backend
 
   saml_proxy:
     build: ./saml_proxy
@@ -36,6 +34,8 @@ services:
       - MONGOHOST=mongo
     depends_on:
       - mongo
+    volumes:
+      - ./certs/:/code/app/saml/certs/:ro
   mongo:
     image: mongo:7.0.4
     environment:

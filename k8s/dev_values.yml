@@ -1,0 +1,18 @@
+# Here are the values that you should adapt to your project:
+app_name: "saml_testing"
+namespace: "rse"
+kubernetes_domain: "k8s-test.cs.aalto.fi"
+app_image: harbor...
+saml_proxy_image: harbor...
+# Here are values relevant to the dev deployment
+
+
+keycloak_user: myuser
+keycloak_password: Pa55w0rd
+keycloack_admin: admin  
+keycloak_admin_password: admin
+
+mysql_password: password
+mysql_user: keycloak
+mysql_database: keycloak
+mysql_root_password: root_pw
