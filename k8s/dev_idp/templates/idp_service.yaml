@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dev_idp_{{ .Values.app_name }}_svc
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: dev_idp_{{ .Values.app_name }}_svc
     app.kubernetes.io/component: server
