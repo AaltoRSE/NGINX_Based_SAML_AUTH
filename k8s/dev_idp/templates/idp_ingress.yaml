@@ -5,7 +5,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.app_name }}-idp-ingress
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
   annotations:
     # Use a certificate manager to automatically handle SSL. Ask your cluster admin to set this up.
     cert-manager.io/cluster-issuer: "letsencrypt-prod"

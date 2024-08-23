@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ Values.app_name }}-saml-proxy
+  name: {{ .Values.app_name }}-saml-proxy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ Values.app_name }}-saml-proxy
+      app: {{ .Values.app_name }}-saml-proxy
   template:
     metadata:
       labels:
-        app: {{ Values.app_name }}-saml-proxy
+        app: {{ .Values.app_name }}-saml-proxy
     spec:
       containers:
-        - name: {{ Values.app_name }}-saml-proxy
+        - name: {{ .Values.app_name }}-saml-proxy
           image: {{ .Values.saml_proxy_image }}
           volumeMounts:
             - name: config-volume

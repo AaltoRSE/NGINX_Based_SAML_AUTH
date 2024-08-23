@@ -21,7 +21,7 @@ data:
             server_name localhost;
             access_log /dev/stdout custom_log_format;    
             location /saml/auth {
-                proxy_pass       http://{{ Values.app_name }}-saml-proxy-svc;
+                proxy_pass       http://{{ .Values.app_name }}-saml-proxy-svc;
                 proxy_set_header Host                    $host;
                 proxy_set_header X-Real-IP               $remote_addr;
                 proxy_set_header X-Auth-Request-Redirect $request_uri;
@@ -29,7 +29,7 @@ data:
                 # proxy_set_header X-Auth-Request-Redirect $scheme://$host$request_uri;
             }
             location /saml/ {
-                proxy_pass       http://{{ Values.app_name }}-saml-proxy-svc;
+                proxy_pass       http://{{ .Values.app_name }}-saml-proxy-svc;
                 proxy_set_header Host             $host;
                 proxy_set_header X-Real-IP        $remote_addr;
                 proxy_set_header X-Forwarded-Uri  $request_uri;
@@ -77,7 +77,7 @@ data:
                     add_header Set-Cookie $auth_cookie_name_1;
                 }
 
-                proxy_pass http://{{ Values.app_name }}-svc/;
+                proxy_pass http://{{ .Values.app_name }}-svc/;
                 # or "root /path/to/site;" or "fastcgi_pass ..." etc
             }
         }

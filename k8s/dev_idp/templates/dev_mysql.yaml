@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app_name }}-mysql
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:
@@ -40,7 +40,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.app_name }}-mysql
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
 spec:
   ports:
     - port: 3306
@@ -52,7 +52,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.app_name }}-mysql-volume
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
 spec:
   storageClassName: nfs-client # Empty string must be explicitly set otherwise default StorageClass will be set
   accessModes: [ReadWriteOnce] # This should only ever be accessed by one mongoDB server instance

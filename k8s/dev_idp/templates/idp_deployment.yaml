@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app_name }}-keycloak
-  namespace: {{ Values.namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
     app.kubernetes.io/component: server
