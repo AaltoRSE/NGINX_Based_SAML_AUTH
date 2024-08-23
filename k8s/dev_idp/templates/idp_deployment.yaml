@@ -27,6 +27,7 @@ spec:
           resources:
             requests:
               cpu: 1
+          command: ["start-dev"]
           env:
             - {
                 name: DB_VENDOR,
