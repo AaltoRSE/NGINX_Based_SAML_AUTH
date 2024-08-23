@@ -18,11 +18,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
         app.kubernetes.io/component: server
-    spec:
-      initContainers:
-        - name: init-mysql-check
-          image: busybox
-          command: ['sh', '-c', 'until nc -z -v -w30 {{ .Values.app_name }}-mysql 3306; do echo "Waiting for MySQL..."; sleep 5; done']
+    spec:      
       containers:
         - name: {{ .Values.app_name }}-keycloak
           image: quay.io/keycloak/keycloak:25.0.4
