@@ -26,7 +26,7 @@ spec:
             # the service defined below (matching the name).
             backend:
               service:
-                name: dev_idp_{{ .Values.app_name }}_svc
+                name: dev-idp-{{ .Values.app_name }}-svc
                 port:
                   number: 80          
 ---

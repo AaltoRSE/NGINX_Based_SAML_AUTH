@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dev_idp_{{ .Values.app_name }}_svc
+  name: dev-idp-{{ .Values.app_name }}-svc
   namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/name: dev_idp_{{ .Values.app_name }}_svc
+    app.kubernetes.io/name: dev_idp-{{ .Values.app_name }}-svc
     app.kubernetes.io/component: server
 spec:
   ports:
@@ -13,4 +13,4 @@ spec:
       targetPort: 8081
       protocol: TCP
   selector:
-    app.kubernetes.io/name: dev_idp_{{ .Values.app_name }}
+    app.kubernetes.io/name: dev-idp-{{ .Values.app_name }}
