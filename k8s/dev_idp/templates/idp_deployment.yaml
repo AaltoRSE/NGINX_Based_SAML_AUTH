@@ -34,7 +34,7 @@ spec:
               }
             - {
                 name: DB_ADDR,
-                value: {{ .Values.app_name }}-mysql
+                value: {{ .Values.app_name }}-mysql-svc
               }
             - {
                 name: DB_DATABASE,
