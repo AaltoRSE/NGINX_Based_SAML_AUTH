@@ -7,6 +7,7 @@ saml_proxy_image: harbor...
 idp_provider_entity_id: "https://..."
 idp_provider_url_signon: "https://..."
 idp_provider_url_logout: "https://..."
+idp_x509cert: "..."
 # Here are values relevant to the dev deployment
 
 

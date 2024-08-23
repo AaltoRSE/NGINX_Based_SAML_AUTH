@@ -24,4 +24,8 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ .Values.app_name }}-saml-config
+          {{ if .Values.isdev }}
+            name: {{ .Values.app_name }}-saml-dev-config
+          {{ else }}
+            name: {{ .Values.app_name }}-saml-prod-config
+          {{ end }}
