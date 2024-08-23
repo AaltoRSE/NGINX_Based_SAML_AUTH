@@ -13,4 +13,4 @@ spec:
       targetPort: 8080
       protocol: TCP
   selector:
-    app.kubernetes.io/name: dev-idp-{{ .Values.app_name }}
+    app.kubernetes.io/name: {{ .Values.app_name }}-keycloak
