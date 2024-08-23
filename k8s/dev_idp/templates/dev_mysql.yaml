@@ -39,8 +39,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app_name }}-mysql
+  name: {{ .Values.app_name }}-mysql-svc
   namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app_name }}-mysql-svc
+    app.kubernetes.io/component: server
 spec:
   ports:
     - port: 3306
