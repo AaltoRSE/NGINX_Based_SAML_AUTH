@@ -22,7 +22,7 @@ data:
             "privateKey": ""
         },
         "idp" : {
-            "entityId" : "{{ .Values.idp_prod_entity_id }}",
+            "entityId" : "{{ .Values.idp_provider_entity_id }}",
             "singleSignOnService": {
                 "url" : "{{ .Values.idp_provider_url_signon }}",
                 "binding" : "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
