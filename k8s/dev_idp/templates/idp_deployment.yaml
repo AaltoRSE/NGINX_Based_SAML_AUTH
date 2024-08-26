@@ -76,7 +76,15 @@ spec:
             - {
                 name: KC_HTTP_ENABLED,
                 value: "true"
-              }             
+              }
+            - {
+                name: KC_HOSTNAME_URL
+                value: https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}                
+              }     
+            - {
+                name:  KC_HOSTNAME_STRICT_BACKCHANNEL,
+                value: "true"
+              }  
 
 
         
