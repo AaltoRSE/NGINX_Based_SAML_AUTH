@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.app_name }}-saml-proxy
 spec:
   replicas: 1
+  
   selector:
     matchLabels:
       app: {{ .Values.app_name }}-saml-proxy
@@ -19,9 +20,15 @@ spec:
             - name: config-volume
               mountPath: /code/app/saml/settings.json
               subPath: settings.json
+            - mountPath: /code/app/saml/certs
+              name: certificate-volume
+              readOnly: true
           ports:
             - containerPort: 3000 
       volumes:
+        - name: certificate-volume
+          secret:
+            secretName: {{ .Values.app_name }}-saml-proxy-secret
         - name: config-volume
           configMap:
           {{ if .Values.isdev }}
@@ -29,3 +36,4 @@ spec:
           {{ else }}
             name: {{ .Values.app_name }}-saml-prod-config
           {{ end }}
+        
