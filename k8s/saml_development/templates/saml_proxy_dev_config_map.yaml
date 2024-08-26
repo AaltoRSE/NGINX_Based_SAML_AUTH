@@ -31,6 +31,6 @@ data:
                 "binding":"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
                 "url" :"https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}/realms/master/protocol/saml"
             },
-            "x509cert": "{{ .Values.idp.x509cert }}"
+            "x509cert": "{{ .Values.idp_x509cert }}"
         }   
     }
