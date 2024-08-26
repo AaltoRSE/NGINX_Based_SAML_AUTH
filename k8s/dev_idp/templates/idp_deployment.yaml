@@ -27,7 +27,7 @@ spec:
           resources:
             requests:
               cpu: 1
-          args: ["start-dev"]
+          args: ["start"]
           env:
             - {
                 name: DB_VENDOR,
@@ -67,8 +67,16 @@ spec:
               }    
             - {
                 name: KC_PROXY_HEADERS,
-                value: forwarded
-              }                    
+                value: forwarded|xforwarded
+              }        
+            - {
+                name: KC_HOSTNAME,
+                value: {{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
+              }
+            - {
+                name: KC_HTTP_ENABLED,
+                value: "true"
+              }             
 
 
         
