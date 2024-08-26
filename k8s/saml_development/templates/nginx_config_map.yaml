@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-nginx-config
+  name: {{ .Values.app_name }}-nginx-config
 data:
   nginx.conf: |
     events {
