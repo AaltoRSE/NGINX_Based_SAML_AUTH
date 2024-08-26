@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
-      secretName: {{ .Values.app_name }}-tls
+      secretName: {{ .Values.app_name }}-idp-tls
   rules:
     - host: {{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
       http:
