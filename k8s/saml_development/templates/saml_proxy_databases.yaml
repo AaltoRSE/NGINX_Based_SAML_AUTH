@@ -19,7 +19,7 @@ metadata:
 type: Opaque
 data:
   user: {{ .Values.saml_proxy_mongo_user | b64enc}}
-  sp.key: {{ .Values.saml_proxy_mongo_password | b64enc}}  
+  password: {{ .Values.saml_proxy_mongo_password | b64enc}}  
 ---
 apiVersion: v1
 kind: Service
