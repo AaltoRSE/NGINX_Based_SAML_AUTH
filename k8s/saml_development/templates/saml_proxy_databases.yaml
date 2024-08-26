@@ -92,5 +92,5 @@ metadata:
   name: {{ .Values.app_name }}-saml-proxy-mongo
 type: Opaque
 data:
-  user: {{ .Values.saml_proxy_mongo_user }}
-  sp.key: {{ .Values.saml_proxy_mongo_password }}  
+  user: {{ .Values.saml_proxy_mongo_user | b64enc}}
+  sp.key: {{ .Values.saml_proxy_mongo_password | b64enc}}  
