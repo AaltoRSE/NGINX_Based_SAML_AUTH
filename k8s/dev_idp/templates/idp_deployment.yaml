@@ -78,7 +78,7 @@ spec:
                 value: "true"
               }
             - {
-                name: KC_HOSTNAME_URL
+                name: KC_HOSTNAME_URL,
                 value: https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}                
               }     
             - {
