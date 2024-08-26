@@ -2,15 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.app_name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.app_name }}
+    app.kubernetes.io/component: server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.app_name }}
+      app.kubernetes.io/name: {{ .Values.app_name }}
+      app.kubernetes.io/component: server
   template:
     metadata:
       labels:
-        app: {{ .Values.app_name }}
+        app.kubernetes.io/name: {{ .Values.app_name }}
+        app.kubernetes.io/component: server
     spec:
       containers:
         - name: {{ .Values.app_name }}
