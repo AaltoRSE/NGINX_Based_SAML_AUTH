@@ -69,5 +69,20 @@ spec:
                 name: KEYCLOAK_FRONTEND_URL,
                 value: "https://{{ .Values.app_name}}. {{ .Values.kubernetes_domain }}"
               }           
+            - {
+                name : KC_HOSTNAME_URL,
+                value: "https://{{ .Values.app_name}}. {{ .Values.kubernetes_domain }}"
+              }
+            - {
+                name: KC_HOSTNAME_ADMIN_URL,
+                value: "https://{{ .Values.app_name}}. {{ .Values.kubernetes_domain }}"
+              }
+            - {
+                name: KC_ADMIN_URL,
+                value: "https://{{ .Values.app_name}}. {{ .Values.kubernetes_domain }}"
+              }
+            
+
+
 
         
