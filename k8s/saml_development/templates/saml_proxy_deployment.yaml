@@ -25,6 +25,17 @@ spec:
               readOnly: true
           ports:
             - containerPort: 3000 
+          env:
+            # Mongo settings You might want to update this
+            - {
+                name: MONGOUSER,
+                valueFrom: { secretKeyRef: { name: {{ .Values.app_name }}-saml-proxy-mongo, key: user } },
+              }
+            - {
+                name: MONGOPASSWORD,
+                valueFrom: { secretKeyRef: { name: {{ .Values.app_name }}-saml-proxy-mongo, key: password } },
+              }
+            - { name: MONGOHOST, value: "{{ .Values.app_name }}-saml-proxy-mongo-svc" }
       volumes:
         - name: certificate-volume
           secret:

@@ -8,6 +8,10 @@ idp_provider_entity_id: "https://..."
 idp_provider_url_signon: "https://..."
 idp_provider_url_logout: "https://..."
 idp_x509cert: "..."
+
+saml_proxy_mongo_user: '...'
+saml_proxy_mongo_password: '...'
+
 # Here are values relevant to the dev deployment
 
 
