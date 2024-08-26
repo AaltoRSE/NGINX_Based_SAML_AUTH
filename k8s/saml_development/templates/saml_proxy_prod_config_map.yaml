@@ -31,6 +31,6 @@ data:
                 "binding":"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
                 "url" :"{{ .Values.idp_provider_url_logout }}"
             },
-            "x509cert": "{{ .Values.idp.x509cert }}"
+            "x509cert": "{{ .Values.idp_x509cert }}"
         }   
     }
