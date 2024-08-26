@@ -64,7 +64,11 @@ spec:
             - {
                 name: KEYCLOAK_ADMIN_PASSWORD,
                 value: {{ .Values.keycloak_admin_password }}
-              }                        
+              }    
+            - {
+                name: KC_PROXY_HEADERS,
+                value: forwarded
+              }                    
 
 
         
