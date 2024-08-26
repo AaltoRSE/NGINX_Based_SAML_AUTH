@@ -6,8 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ .Values.app_name }}-saml-proxy
     app.kubernetes.io/component: server
 spec:
-  replicas: 1
-  
+  replicas: 1  
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Values.app_name }}-saml-proxy
@@ -16,7 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: {{ .Values.app_name }}-saml-proxy
-         app.kubernetes.io/component: server
+        app.kubernetes.io/component: server
     spec:
       containers:
         - name: {{ .Values.app_name }}-saml-proxy
