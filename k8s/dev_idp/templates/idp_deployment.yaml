@@ -70,6 +70,7 @@ spec:
                 value: forwarded
               }        
             - {
+                # We need to set the hostname here, so that forwards go to https and not http...
                 name: KC_HOSTNAME,
                 value: https://{{ .Values.app_name }}-idp.{{ .Values.kubernetes_domain }}
               }
