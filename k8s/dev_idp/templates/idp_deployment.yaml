@@ -67,7 +67,7 @@ spec:
               }    
             - {
                 name: KC_PROXY_HEADERS,
-                value: forwarded|xforwarded
+                value: forwarded
               }        
             - {
                 name: KC_HOSTNAME,
