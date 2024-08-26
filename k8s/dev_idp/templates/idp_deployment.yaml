@@ -64,5 +64,10 @@ spec:
             - {
                 name: KEYCLOAK_ADMIN_PASSWORD,
                 value: {{ .Values.keycloak_admin_password }}
-              }             
+              }
+            - {
+                name: KEYCLOAK_FRONTEND_URL,
+                value: "{{ .Values.app_name}}. {{ .Values.kubernetes_domain }}"
+              }           
+
         
