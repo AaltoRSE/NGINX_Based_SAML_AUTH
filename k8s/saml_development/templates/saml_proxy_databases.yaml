@@ -75,18 +75,6 @@ spec:
 
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.app_name }}-saml-proxy-mongo-volume
-  namespace: {{ .Values.namespace }}
-spec:
-  storageClassName: nfs-client # Empty string must be explicitly set otherwise default StorageClass will be set
-  accessModes: [ReadWriteOnce] # This should only ever be accessed by one mongoDB server instance
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .Values.app_name }}-saml-proxy-mongo
