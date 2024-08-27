@@ -10,6 +10,9 @@ metadata:
     # Use a certificate manager to automatically handle SSL. Ask your cluster admin to set this up.
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     # Spec tells the actual parameters: hosts to listen on, path prefixes.
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "7200"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "7200"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
 spec:
   tls:
     - hosts:
