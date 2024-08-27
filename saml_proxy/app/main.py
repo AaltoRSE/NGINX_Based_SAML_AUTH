@@ -74,6 +74,17 @@ async def auth_test(request: Request):
         )
 
 
+@app.websocket("/saml/auth")
+async def websocket_endpoint(request: Request):
+    if request.user.is_authenticated:
+        logging.info(f"User is:{request.user.username}")
+        return {"authed": True, "user": request.user.username}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+        )
+
+
 @app.get("/saml/login")
 async def login(request: Request):
     req = await prepare_from_fastapi_request(request)
