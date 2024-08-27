@@ -59,23 +59,13 @@ async def logger_middleware(request: Request, call_next):
     return response
 
 
+@app.get("/saml/websocket_auth")
 @app.get("/saml/auth")
 async def auth_test(request: Request):
     # Obtain the auth manually here, because we want to provide
     # Information about the authentication status, and using security would make this fail with Unauthorized
     # Responses...
     logging.info("Got auth request")
-    if request.user.is_authenticated:
-        logging.info(f"User is:{request.user.username}")
-        return {"authed": True, "user": request.user.username}
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-        )
-
-
-@app.websocket("/saml/auth")
-async def websocket_endpoint(websocket: WebSocket, request: Request):
     if request.user.is_authenticated:
         logging.info(f"User is:{request.user.username}")
         return {"authed": True, "user": request.user.username}
