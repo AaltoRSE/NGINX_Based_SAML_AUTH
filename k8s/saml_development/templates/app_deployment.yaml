@@ -17,6 +17,13 @@ spec:
         app.kubernetes.io/name: {{ .Values.app_name }}
         app.kubernetes.io/component: server
     spec:
+      tolerations:
+        - key: "cs-aalto/gpu"
+          operator: Exists
+          effect: NoSchedule      
+      nodeSelector:
+        # We need to geta  GPU node
+        kubernetes.io/hostname: k8s-gpu.cs.aalto.fi                                
       containers:
         - name: {{ .Values.app_name }}
           image: {{ .Values.app_image }}
@@ -30,6 +37,12 @@ spec:
           volumeMounts:
             - mountPath: /home/user/.cache/fairseq2/
               name: {{ .Values.app_name }}-app-volume
+          resources: # Restrict to one GPU
+            requests:              
+              cpu: "250m"
+            limits: # For GPUs, this will block a full GPU for this model (probably shouldn't deploy more than one instance)...               
+              nvidia.com/gpu: 1
+              cpu: 1
       volumes:
         - name: {{ .Values.app_name }}-app-volume
           persistentVolumeClaim:
