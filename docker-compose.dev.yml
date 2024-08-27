@@ -44,11 +44,17 @@ services:
   backend:
     build: ./seamless
     # Port forwarding just for testing purposes
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all # or specify GPU ids (e.g., "0,1")
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
     ports:
       - "8080:80"
-    environment:
-      # Add your backend environment variables here
-      - SOME_BACKEND_ENV_VAR=some_value
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 10s
