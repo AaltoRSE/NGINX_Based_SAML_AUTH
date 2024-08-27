@@ -22,4 +22,29 @@ spec:
           image: {{ .Values.app_image }}
           # Update your config as necessary for your app!          
           ports:
-            - containerPort: 3000 
+            - containerPort: 7860 
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          volumeMounts:
+            - mountPath: /home/user/.cache/fairseq2/
+              name: {{ .Values.app_name }}-app-volume
+      volumes:
+        - name: {{ .Values.app_name }}-app-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.app_name }}-app-volume
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.app_name }}-app-volume
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: nfs-client # Empty string must be explicitly set otherwise default StorageClass will be set
+  accessModes: [ReadWriteOnce] # This should only ever be accessed by one mongoDB server instance
+  resources:
+    requests:
+      storage: 10Gi
+#---
