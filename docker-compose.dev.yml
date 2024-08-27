@@ -50,6 +50,7 @@ services:
           devices:
             - capabilities: [gpu]
     runtime: nvidia
+    user: "1000:1000"
     environment:
       - NVIDIA_VISIBLE_DEVICES=all # or specify GPU ids (e.g., "0,1")
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
