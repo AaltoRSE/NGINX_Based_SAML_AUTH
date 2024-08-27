@@ -55,6 +55,9 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
     ports:
       - "7860:7860"
+    volumes:
+      - ./backend/cache/torch:/home/user/.cache/torch
+      - ./backend/cache/fairseq2:/home/user/.cache/fairseq
   nginx:
     image: nginx:alpine
     ports:
