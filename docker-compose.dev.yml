@@ -42,10 +42,10 @@ services:
     command:
       - start-dev
   backend:
-    build: ./test
+    build: ./seamless
     # Port forwarding just for testing purposes
     ports:
-      - "8080:3000"
+      - "8080:80"
     environment:
       # Add your backend environment variables here
       - SOME_BACKEND_ENV_VAR=some_value
