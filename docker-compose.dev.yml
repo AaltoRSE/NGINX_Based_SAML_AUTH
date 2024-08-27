@@ -55,11 +55,6 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
     ports:
       - "8080:80"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
   nginx:
     image: nginx:alpine
     ports:
@@ -69,8 +64,6 @@ services:
     depends_on:
       saml_proxy:
         condition: service_started
-      backend:
-        condition: service_healthy
 
   saml_proxy:
     build: ./saml_proxy
