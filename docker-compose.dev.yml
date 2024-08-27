@@ -57,7 +57,7 @@ services:
       - "7860:7860"
     volumes:
       - ./backend/cache/torch:/home/user/.cache/torch
-      - ./backend/cache/fairseq2:/home/user/.cache/fairseq
+      - ./backend/cache/fairseq2:/home/user/.cache/fairseq2
   nginx:
     image: nginx:alpine
     ports:
