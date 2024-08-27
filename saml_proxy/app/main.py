@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import FastAPI, Request, Response, Security, HTTPException
+from fastapi import FastAPI, Request, Response, Security, HTTPException, WebSocket
 from starlette.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -75,7 +75,7 @@ async def auth_test(request: Request):
 
 
 @app.websocket("/saml/auth")
-async def websocket_endpoint(request: Request):
+async def websocket_endpoint(websocket: WebSocket, request: Request):
     if request.user.is_authenticated:
         logging.info(f"User is:{request.user.username}")
         return {"authed": True, "user": request.user.username}
