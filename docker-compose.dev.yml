@@ -54,7 +54,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all # or specify GPU ids (e.g., "0,1")
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
     ports:
-      - "8080:80"
+      - "7860:7860"
   nginx:
     image: nginx:alpine
     ports:
