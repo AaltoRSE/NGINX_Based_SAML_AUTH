@@ -1,0 +1,3 @@
+[submodule "seamless"]
+	path = seamless
+	url = https://huggingface.co/spaces/facebook/seamless-streaming
