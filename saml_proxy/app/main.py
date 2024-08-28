@@ -19,7 +19,7 @@ import logging
 
 
 def get_authed_user(conn: HTTPConnection):
-#    logging.info(conn.user)
+    #    logging.info(conn.user)
     if not conn.user.is_authenticated:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -52,9 +52,9 @@ async def logger_middleware(request: Request, call_next):
     method = request.method
     log_message = f"Received request: {method} {path}"
     query = request.url.query
-#    logging.info(log_message)
-#    logging.info(request.headers)
-#    logging.info(query)
+    #    logging.info(log_message)
+    #    logging.info(request.headers)
+    #    logging.info(query)
     response = await call_next(request)
     return response
 
@@ -65,12 +65,11 @@ async def auth_test(request: Request):
     # Obtain the auth manually here, because we want to provide
     # Information about the authentication status, and using security would make this fail with Unauthorized
     # Responses...
-#    logging.info("Got auth request")
+    #    logging.info("Got auth request")
     if request.user.is_authenticated:
-#        logging.info(f"User is:{request.user.username}")
-         logging.info(f"User authenticated at {Request.url}")
+        #        logging.info(f"User is:{request.user.username}")
+        logging.info(f"User authenticated at {Request.url}")
         return {"authed": True, "user": request.user.username}
-    
     else:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
@@ -88,12 +87,12 @@ async def login(request: Request):
 
 @app.post("/saml/acs")
 async def saml_callback(request: Request):
-#    logging.info("SAML Auth requested")
+    #    logging.info("SAML Auth requested")
     req = await prepare_from_fastapi_request(request, True)
     auth = OneLogin_Saml2_Auth(req, saml_settings)
     auth.process_response()  # Process IdP response
     errors = auth.get_errors()  # This method receives an array with the errors
-#    logging.info("SAML processed")
+    #    logging.info("SAML processed")
     if len(errors) == 0:
         if not auth.is_authenticated():
             # This check if the response was ok and the user data retrieved or not (user authenticated)
@@ -114,19 +113,19 @@ async def saml_callback(request: Request):
                     detail="User not allowed to use this resource",
                 )
             session_key = session_handler.create_session(sessionData)
-#            logging.info("Session key created, adding to request session")
+            #            logging.info("Session key created, adding to request session")
             request.session["key"] = session_key
             request.session["invalid"] = False
             forwardAddress = f"/"
-#            logging.info("Forwarding to /")
+            #            logging.info("Forwarding to /")
             return RedirectResponse(
                 url=forwardAddress, status_code=status.HTTP_303_SEE_OTHER
             )
     else:
-#        logging.error(
-#            "Error when processing SAML Response: %s %s"
-#            % (", ".join(errors), auth.get_last_error_reason())
-#        )
+        #        logging.error(
+        #            "Error when processing SAML Response: %s %s"
+        #            % (", ".join(errors), auth.get_last_error_reason())
+        #        )
         return "Error in callback"
 
 
@@ -141,7 +140,7 @@ async def saml_logout(request: Request, user: any = Security(get_authed_user)):
     req = await prepare_from_fastapi_request(request, True)
     auth = OneLogin_Saml2_Auth(req, saml_settings)
     name_id = session_index = name_id_format = name_id_nq = name_id_spnq = None
-#    logging.info(user)
+    #    logging.info(user)
     userData = user.get_user_data()
     if "samlNameId" in userData:
         name_id = userData["samlNameId"]
@@ -160,7 +159,7 @@ async def saml_logout(request: Request, user: any = Security(get_authed_user)):
         name_id_format=name_id_format,
         spnq=name_id_spnq,
     )
-#    logging.info(f"Redirecting to {url}")
+    #    logging.info(f"Redirecting to {url}")
     request.session["LogoutRequestID"] = auth.get_last_request_id()
     return RedirectResponse(url=url)
 
@@ -169,13 +168,13 @@ async def saml_logout(request: Request, user: any = Security(get_authed_user)):
 async def saml_logout(request: Request, user: any = Security(get_authed_user)):
     req = await prepare_from_fastapi_request(request, True)
     auth = OneLogin_Saml2_Auth(req, saml_settings)
-#   logging.info(req)
+    #   logging.info(req)
     request_id = None
     if "LogoutRequestID" in request.session:
         request_id = request.session["LogoutRequestID"]
     dscb = lambda: clean_session(request.session)
     url = auth.process_slo(request_id=request_id, delete_session_cb=dscb)
-#    logging.info(url)
+    #    logging.info(url)
     errors = auth.get_errors()
     if len(errors) == 0:
         if url is not None:
