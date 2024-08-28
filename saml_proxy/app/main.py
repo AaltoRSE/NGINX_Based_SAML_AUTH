@@ -68,7 +68,7 @@ async def auth_test(request: Request):
     #    logging.info("Got auth request")
     if request.user.is_authenticated:
         #        logging.info(f"User is:{request.user.username}")
-        logging.info(f"User authenticated at {Request.url}")
+        #        logging.info(f"User authenticated at {Request.url}")
         return {"authed": True, "user": request.user.username}
     else:
         raise HTTPException(
