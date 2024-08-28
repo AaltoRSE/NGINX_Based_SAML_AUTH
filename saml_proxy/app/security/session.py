@@ -35,7 +35,6 @@ class SessionHandler:
         if session_key == None:
             # Should be the case in most instances.
             session_key = self.generate_session_key()
-        logging.info("Creating session")
         expires_delta = timedelta(seconds=self.expire_time)
         expire = datetime.now() + expires_delta
         dataToSet = {
@@ -50,9 +49,6 @@ class SessionHandler:
         result = self.session_collection.update_one(
             {"key": session_key}, upsertCommand, upsert=not update_existing
         )
-        logging.info("Creating session with following data:")
-        logging.info(dataToSet)
-        logging.info("Obtained result from db")
         # Nothing should have happened, if something was matched.
         while (not update_existing) and (not result.matched_count == 0):
             # This should indicate, that the key already existed.
@@ -71,22 +67,17 @@ class SessionHandler:
             result = self.session_collection.update_one(
                 {"key": session_key}, upsertCommand, upsert=True
             )
-        logging.info("Returning key : " + session_key)
         return session_key
 
     def get_session_data(self, session_key):
-        logging.info(session_key)
         entry = self.session_collection.find_one({"key": session_key})
         if entry == None:
             return None
         ctime = datetime.now().timestamp()
-        logging.info(entry)
-        logging.info(f"Current time:{ctime} // Session Expired at: {entry['expire']}")
         if ctime >= entry["expire"]:
             # This is expired, we can remove it...
             self.session_collection.delete_one({"key": session_key})
             return None
-        logging.info("Session valid, returning")
         return entry["data"]
 
     def generate_session_key(self, length: int = 128):
