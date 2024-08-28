@@ -39,6 +39,20 @@ data:
             # Redirect to SSO for authentication
                 return 302 /saml/login;
             }
+
+            location /ws/socket.io/ {            
+            auth_request /saml/auth;
+            #Forward to the socket.io endpoints on the seamless streaming server
+            proxy_pass http://{{ .Values.app_name }}-svc/ws/socket.io/;    
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;                 
+        }  
+
             location / {
                 auth_request /saml/auth;
                 error_page 401 @sso_redirect;
