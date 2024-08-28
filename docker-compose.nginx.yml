@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  # For the dev environment, we will use some additional services.
+  # keycloak and mysql, the keycloak checker and mysql
+  backend:
+    build: ./seamless
+    # Port forwarding just for testing purposes
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
+    user: "1000:1000"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all # or specify GPU ids (e.g., "0,1")
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility # or specify required capabilities (e.g., "compute,utility,video")
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./backend/cache/torch:/home/user/.cache/torch
+      - ./backend/cache/fairseq2:/home/user/.cache/fairseq
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx_pure/nginx.conf:/etc/nginx/nginx.conf:ro
